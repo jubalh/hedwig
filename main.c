@@ -10,6 +10,14 @@ int message_handler(xmpp_conn_t * const conn,
                     xmpp_stanza_t * const stanza,
                     void * const userdata)
 {
+   char *message;
+
+   if(!xmpp_stanza_get_child_by_name(stanza, "body")) return 1;
+   if(!strcmp(xmpp_stanza_get_attribute(stanza, "type"), "error")) return 1;
+
+   message = xmpp_stanza_get_text(xmpp_stanza_get_child_by_name(stanza, "body"));
+
+   printf("Incoming message from %s: %s\n", xmpp_stanza_get_attribute(stanza, "from"), message);
    return 1;
 }
 
@@ -51,7 +59,7 @@ void conn_handler(xmpp_conn_t * const conn,
     {
        printf("DEBUG: connected\n");
 
-       xmpp_handler_add(conn, message_handler, NULL, "presence", NULL, ctx);
+       xmpp_handler_add(conn, message_handler, NULL, "message", NULL, ctx);
 
        // send presence
        //pres = xmpp_stanza_new(ctx);
