@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
    xmpp_conn_set_pass(conn, pPassword);
 
    printf("connect\n");
-   xmpp_connect_client(conn, "" , 0, conn_handler, ctx);
+   xmpp_connect_client(conn, NULL , 0, conn_handler, ctx);
 
    printf("run\n");
    xmpp_run(ctx);
