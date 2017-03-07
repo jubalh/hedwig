@@ -7,19 +7,22 @@
 #include "users.h"
 #include "xmpp.h"
 
-#define JID "test@jabber.org"
-#define PASSWORD "password"
-
 struct list *pUsersInRoster = NULL;
+
+void print_usage()
+{
+   printf("Options:\n");
+   printf("-j JID\t\tset jid\n");
+   printf("-p PASSWORD\tset password\n");
+}
 
 int main(int argc, char *argv[])
 {
    xmpp_ctx_t *ctx;
    xmpp_conn_t *conn;
    xmpp_log_t *log;
-
-   char *pJid = JID;
-   char *pPassword = PASSWORD;
+   char *pJid = NULL;
+   char *pPassword = NULL;
 
    printf("Hello World!\n");
 
@@ -35,6 +38,12 @@ int main(int argc, char *argv[])
             pPassword = strdup(optarg);
             break;
       }
+   }
+
+   if (NULL == pJid || NULL == pPassword)
+   {
+      print_usage();
+      return 1;
    }
 
    xmpp_initialize();
@@ -56,6 +65,8 @@ int main(int argc, char *argv[])
    printf("run\n");
    xmpp_run(ctx);
 
+   freeList(pUsersInRoster);
+   free(pJid); free(pPassword);
    xmpp_conn_release(conn);
    xmpp_ctx_free(ctx);
    xmpp_shutdown();
