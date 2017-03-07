@@ -8,7 +8,7 @@ int message_handler(xmpp_conn_t * const conn,
                     xmpp_stanza_t * const stanza,
                     void * const userdata)
 {
-   char *message;
+   char *message, *from, *bare_from;
    xmpp_ctx_t *ctx = (xmpp_ctx_t*)userdata;
 
    if(!xmpp_stanza_get_child_by_name(stanza, "body")) return 1;
@@ -16,7 +16,24 @@ int message_handler(xmpp_conn_t * const conn,
 
    message = xmpp_stanza_get_text(xmpp_stanza_get_child_by_name(stanza, "body"));
 
-   printf("Incoming message from %s: %s\n", xmpp_stanza_get_attribute(stanza, "from"), message);
+   printf("Received from %s: %s\n", xmpp_stanza_get_attribute(stanza, "from"), message);
+
+   // TODO: continue here
+   from = xmpp_stanza_get_attribute(stanza, "from");
+   bare_from = xmpp_jid_bare(ctx, from);
+   if (isInList(pUsersInRoster, bare_from))
+   {
+      printf("Ok!\n");
+      //parse(message);
+   }
+   else
+   {
+      printf("Ignoring: %s not in roster.\n", bare_from);
+   }
+
+   xmpp_free(ctx, message);
+   xmpp_free(ctx, bare_from);
+   xmpp_stop(ctx); // TODO: for testing only
 
    return 1;
 }
