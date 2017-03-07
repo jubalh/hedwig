@@ -37,11 +37,12 @@ void freeList(struct list *pList)
 {
    if (pList)
    {
-      while (pList->pNext) {
-         freeList(pList->pNext);
-         pList->pNext = 0;
-      }
-      free(pList->pJid);
-      free(pList);
+      struct list *p;
+      do {
+         p = pList->pNext;
+         free(pList->pJid);
+         free(pList);
+         pList = p;
+      } while (pList);
    }
 }
