@@ -1,8 +1,62 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include <strophe.h>
 #include "users.h"
 
+#define ALLOC_SIZE 512
+
 extern struct list *pUsersInRoster; // defined in main.c
+
+void parse(xmpp_ctx_t *ctx, char *message)
+{
+   if (message && (strlen(message) > 4))
+   {
+      if (message[0] == '!' &&
+         message[1] == 'r' &&
+         message[2] == 'u' &&
+         message[3] == 'n' &&
+         message[4] == ' ')
+      {
+         FILE *outFile;
+         char buffer[512];
+         char *output;
+         size_t size;
+
+         outFile = popen(&message[5], "r");
+         if (!outFile)
+         {
+            fprintf(stderr, "Error whilte popen() from message: %s\n", message);
+            return;
+         }
+
+         output = malloc(ALLOC_SIZE);
+         output[0] = '\0';
+         do {
+            size = fread(buffer, sizeof(char), 512, outFile);
+            //buffer[size-1] = '\0';
+            if (size != 0 && strlen(buffer) + size + 1> sizeof(output))
+            {
+               output = realloc(output, sizeof(output) + ALLOC_SIZE + 1);
+            }
+            strncat(output, buffer, size);
+         }
+         while (size);
+
+         printf("output: %s\n", output);
+         fclose(outFile);
+      }
+      else if (message[0] == '!' &&
+         message[1] == 'q' &&
+         message[2] == 'u' &&
+         message[3] == 'i' &&
+         message[4] == 't')
+      {
+         printf("Shutting down\n");
+         xmpp_stop(ctx);
+      }
+   }
+}
 
 int message_handler(xmpp_conn_t * const conn,
                     xmpp_stanza_t * const stanza,
@@ -24,7 +78,7 @@ int message_handler(xmpp_conn_t * const conn,
    if (isInList(pUsersInRoster, bare_from))
    {
       printf("Ok!\n");
-      //parse(message);
+      parse(ctx, message);
    }
    else
    {
@@ -33,7 +87,6 @@ int message_handler(xmpp_conn_t * const conn,
 
    xmpp_free(ctx, message);
    xmpp_free(ctx, bare_from);
-   xmpp_stop(ctx); // TODO: for testing only
 
    return 1;
 }
