@@ -3,14 +3,14 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-SOURCES += main.c \
-    users.c \
-    parser.c \
-    xmpp.c
+SOURCES += src/main.c \
+    src/users.c \
+    src/parser.c \
+    src/xmpp.c
 
 LIBS += -lstrophe -lssl
 
 HEADERS += \
-    users.h \
-    parser.h \
-    xmpp.h
+    src/users.h \
+    src/parser.h \
+    src/xmpp.h
