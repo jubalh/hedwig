@@ -73,7 +73,8 @@ int message_handler(xmpp_conn_t * const conn,
                     xmpp_stanza_t * const stanza,
                     void * const userdata)
 {
-   char *message, *from, *bare_from;
+   const char *from;
+   char *message, *bare_from;
    xmpp_ctx_t *ctx = (xmpp_ctx_t*)userdata;
 
    if(!xmpp_stanza_get_child_by_name(stanza, "body")) return 1;
