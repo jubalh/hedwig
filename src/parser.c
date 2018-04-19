@@ -45,7 +45,7 @@ void parse_run(xmpp_ctx_t *ctx, char *message)
         off += r;
     }
 
-    printf("output: %s\n", output_buffer);
+    printf("output:\n%s\n", output_buffer);
     fclose(out_file);
 }
 

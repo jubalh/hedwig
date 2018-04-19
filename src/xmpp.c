@@ -20,19 +20,17 @@ int message_handler(xmpp_conn_t * const conn,
 
    message = xmpp_stanza_get_text(xmpp_stanza_get_child_by_name(stanza, "body"));
 
-   printf("Received from %s: %s\n", xmpp_stanza_get_attribute(stanza, "from"), message);
-
-   // TODO: continue here
    from = xmpp_stanza_get_attribute(stanza, "from");
    bare_from = xmpp_jid_bare(ctx, from);
+
    if (isInList(pUsersInRoster, bare_from))
    {
-      printf("Ok!\n");
+      printf("Received from \x1B[32m%s\x1B[0m:\n%s\n", xmpp_stanza_get_attribute(stanza, "from"), message);
       parse(ctx, message);
    }
    else
    {
-      printf("Ignoring: %s not in roster.\n", bare_from);
+      printf("Received from \x1B[31m%s\x1B[0m:\n%s\n", xmpp_stanza_get_attribute(stanza, "from"), message);
    }
 
    xmpp_free(ctx, message);
@@ -54,7 +52,7 @@ void roster_handler(xmpp_conn_t * const conn,
    else {
       query = xmpp_stanza_get_child_by_name(stanza, "query");
 
-      printf("Roster:\n");
+      printf("Listing roster:\n");
       for (item = xmpp_stanza_get_children(query); item; item = xmpp_stanza_get_next(item))
       {
          printf("\t %s sub=%s\n",
@@ -62,9 +60,8 @@ void roster_handler(xmpp_conn_t * const conn,
             xmpp_stanza_get_attribute(item, "subscription"));
 
          addToList(&pUsersInRoster, xmpp_stanza_get_attribute(item, "jid"));
-
-         printf("END OF LIST\n");
       }
+      printf("End of roster\n\n");
    }
 }
 
@@ -79,7 +76,7 @@ void conn_handler(xmpp_conn_t * const conn,
 
     if (event == XMPP_CONN_CONNECT)
     {
-       printf("DEBUG: connected\n");
+       printf("done\n\n");
 
        xmpp_handler_add(conn, message_handler, NULL, "message", NULL, ctx);
 

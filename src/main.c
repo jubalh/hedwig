@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
    char *pJid = NULL;
    char *pPassword = NULL;
 
-   printf("Hello World!\n");
+   printf("Hedwig started!\n\n");
 
    int opt;
    while ((opt = getopt(argc, argv, "j:p:")) != -1)
@@ -59,10 +59,9 @@ int main(int argc, char *argv[])
    xmpp_conn_set_jid(conn, pJid);
    xmpp_conn_set_pass(conn, pPassword);
 
-   printf("connect\n");
+   printf("Connecting... ");
    xmpp_connect_client(conn, NULL , 0, conn_handler, ctx);
 
-   printf("run\n");
    xmpp_run(ctx);
 
    freeList(pUsersInRoster);
