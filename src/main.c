@@ -26,8 +26,6 @@ int main(int argc, char *argv[])
 	char *pJid = NULL;
 	char *pPassword = NULL;
 
-	printf("Hedwig started!\n\n");
-
 	int opt;
 	while ((opt = getopt(argc, argv, "j:p:")) != -1)
 	{
@@ -47,6 +45,8 @@ int main(int argc, char *argv[])
 		print_usage();
 		return 1;
 	}
+
+	printf("Hedwig started!\n\n");
 
 	xmpp_initialize();
 
