@@ -28,7 +28,8 @@ int message_handler(xmpp_conn_t * const conn,
 	if (isInList(pUsersInRoster, bare_from))
 	{
 		printf("Received from \x1B[32m%s\x1B[0m:\n%s\n", xmpp_stanza_get_attribute(stanza, "from"), message);
-		parse(ctx, message);
+		// see profanity: src/xmpp/message.c:135
+		parse(conn, ctx, message, from);
 	}
 	else
 	{

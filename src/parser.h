@@ -3,6 +3,6 @@
 #ifndef PARSE_H
 #define PARSE_H
 
-void parse(xmpp_ctx_t *ctx, char *message);
+void parse(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid);
 
 #endif // PARSE_H
