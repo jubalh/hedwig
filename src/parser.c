@@ -9,7 +9,7 @@
 
 #define ALLOC_SIZE 512
 
-void parse_run(xmpp_ctx_t *ctx, char *message)
+void parse_run(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid)
 {
 	FILE *out_file;
 	char *output_buffer;
@@ -49,9 +49,18 @@ void parse_run(xmpp_ctx_t *ctx, char *message)
 
 	printf("output:\n%s\n", output_buffer);
 	fclose(out_file);
+
+	// TODO:
+	char *msg = "Hello";
+//	char *id = create_unique_id("msg");
+	char *id = "2239ss3";
+	xmpp_stanza_t *message_st = xmpp_message_new(ctx, "chat", jid, id); //see profanity/src/xmpp/stanza.h
+	xmpp_message_set_body(message_st, msg);
+	xmpp_send(conn, message_st);
+	xmpp_stanza_release(message_st);
 }
 
-void parse(xmpp_ctx_t *ctx, char *message)
+void parse(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid)
 {
 	if (message && (strlen(message) > 4))
 	{
@@ -61,7 +70,7 @@ void parse(xmpp_ctx_t *ctx, char *message)
 				message[3] == 'n' &&
 				message[4] == ' ')
 		{
-			parse_run(ctx, message);
+			parse_run(conn, ctx, message, jid);
 		}
 		else if (message[0] == '!' &&
 				message[1] == 'q' &&
