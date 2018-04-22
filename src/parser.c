@@ -50,14 +50,12 @@ void parse_run(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const c
 	printf("output:\n%s\n", output_buffer);
 	fclose(out_file);
 
-	// TODO:
-	char *msg = "Hello";
-//	char *id = create_unique_id("msg");
-	char *id = "2239ss3";
-	xmpp_stanza_t *message_st = xmpp_message_new(ctx, "chat", jid, id); //see profanity/src/xmpp/stanza.h
-	xmpp_message_set_body(message_st, msg);
+	char *id = xmpp_uuid_gen(ctx);
+	xmpp_stanza_t *message_st = xmpp_message_new(ctx, "chat", jid, id);
+	xmpp_message_set_body(message_st, output_buffer);
 	xmpp_send(conn, message_st);
 	xmpp_stanza_release(message_st);
+	xmpp_free(ctx, id);
 }
 
 void parse(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid)
