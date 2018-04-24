@@ -13,7 +13,6 @@ void parse_run(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const c
 {
 	FILE *out_file;
 	char *output_buffer;
-	size_t size_read;
 	size_t output_size = 0;
 	size_t off = 0;
 
