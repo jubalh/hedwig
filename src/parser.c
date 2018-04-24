@@ -19,7 +19,7 @@ void parse_run(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const c
 	out_file = popen(&message[5], "r");
 	if (!out_file)
 	{
-		fprintf(stderr, "Error whilte popen() from message: %s\n", message);
+		fprintf(stderr, "Error while popen() from message: %s\n", message);
 		return;
 	}
 
