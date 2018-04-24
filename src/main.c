@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strophe.h>
-#include <unistd.h> /* getopt */
+#include <unistd.h> /* getopt, getcwd, chdir */
 #include "users.h"
 #include "xmpp.h"
 #include "global.h"
@@ -61,10 +61,10 @@ int main(int argc, char *argv[])
 
 	printf("Hedwig started!\n\n");
 
-	if (NULL == g_wd)
-	{
+	if (g_wd)
+		chdir(g_wd);
+	else
 		g_wd = getcwd(NULL, 0);
-	}
 	printf("Working directory: %s%s%s\n", CLR_CYAN, g_wd, CLR_DEF);
 
 	xmpp_initialize();
