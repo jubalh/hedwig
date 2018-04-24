@@ -4,6 +4,7 @@
 #define GLOBAL_H
 
 extern bool g_allow_exec;
+extern char *g_wd;
 
 #endif // GLOBAL_H
 

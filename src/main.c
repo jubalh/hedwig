@@ -12,6 +12,7 @@
 
 struct list *pUsersInRoster = NULL;
 bool g_allow_exec = false;
+char *g_wd = NULL;
 
 void print_usage()
 {
@@ -19,6 +20,7 @@ void print_usage()
 	printf("-j JID\t\tset jid\n");
 	printf("-p PASSWORD\tset password\n");
 	printf("Optional:\n");
+	printf("-d DIRECTORY\t\tset working directory\n");
 	printf("-e\t\tallow execution of arbitrary commands via '!exec'\n");
 }
 
@@ -31,7 +33,7 @@ int main(int argc, char *argv[])
 	char *pPassword = NULL;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "j:p:e")) != -1)
+	while ((opt = getopt(argc, argv, "j:p:ed:")) != -1)
 	{
 		switch(opt)
 		{
@@ -44,6 +46,9 @@ int main(int argc, char *argv[])
 			case 'e':
 				g_allow_exec = true;
 				break;
+			case 'd':
+				g_wd = strdup(optarg);
+				break;
 		}
 	}
 
@@ -54,6 +59,12 @@ int main(int argc, char *argv[])
 	}
 
 	printf("Hedwig started!\n\n");
+
+	if (NULL == g_wd)
+	{
+		g_wd = getcwd(NULL, 0);
+	}
+	printf("Working directory: %s\n", g_wd);
 
 	xmpp_initialize();
 
@@ -74,7 +85,7 @@ int main(int argc, char *argv[])
 	xmpp_run(ctx);
 
 	freeList(pUsersInRoster);
-	free(pJid); free(pPassword);
+	free(pJid); free(pPassword); free(g_wd);
 	xmpp_conn_release(conn);
 	xmpp_ctx_free(ctx);
 	xmpp_shutdown();

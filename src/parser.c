@@ -7,6 +7,7 @@
 #include <strophe.h>
 #include "parser.h"
 #include "global.h"
+#include <unistd.h> /* access */
 
 #define ALLOC_SIZE 512
 
@@ -52,19 +53,47 @@ static char * exec_return_output(char * const command)
 	return output_buffer;
 }
 
+static void send(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid)
+{
+	char *id = xmpp_uuid_gen(ctx);
+	xmpp_stanza_t *message_st = xmpp_message_new(ctx, "chat", jid, id);
+	xmpp_message_set_body(message_st, message);
+	xmpp_send(conn, message_st);
+	xmpp_stanza_release(message_st);
+	xmpp_free(ctx, id);
+}
+
 static void parse_exec(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid)
 {
 	char *output;
 
-	output = exec_return_output(&message[5]);
+	output = exec_return_output(message);
 	printf("output:\n%s\n", output);
 
-	char *id = xmpp_uuid_gen(ctx);
-	xmpp_stanza_t *message_st = xmpp_message_new(ctx, "chat", jid, id);
-	xmpp_message_set_body(message_st, output);
-	xmpp_send(conn, message_st);
-	xmpp_stanza_release(message_st);
-	xmpp_free(ctx, id);
+	send(conn, ctx, output, jid);
+
+	free(output);
+}
+
+static void parse_cmd(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid)
+{
+	char cmd[2048];
+	snprintf(cmd, 2048, "%s/%s", g_wd, message);
+
+	char *output;
+	if (0 == access(cmd, X_OK))
+	{
+		printf("Running %s:\n", cmd);
+		output = exec_return_output(cmd);
+		printf("Output:\n%s\n", output);
+	}
+	else
+	{
+		printf("No executable file: %s\n", cmd);
+		output = strdup("Command not known");
+	}
+
+	send(conn, ctx, output, jid);
 
 	free(output);
 }
@@ -81,8 +110,16 @@ void parse(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char 
 		{
 			if (g_allow_exec)
 			{
-				parse_exec(conn, ctx, message, jid);
+				parse_exec(conn, ctx, &message[5], jid);
 			}
+		}
+		else if (message[0] == '!' &&
+				message[1] == 'c' &&
+				message[2] == 'm' &&
+				message[3] == 'd' &&
+				message[4] == ' ')
+		{
+			parse_cmd(conn, ctx, &message[5], jid);
 		}
 		else if (message[0] == '!' &&
 				message[1] == 'q' &&
