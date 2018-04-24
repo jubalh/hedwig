@@ -21,22 +21,25 @@ int message_handler(xmpp_conn_t * const conn,
 	if(!strcmp(xmpp_stanza_get_attribute(stanza, "type"), "error")) return 1;
 
 	message = xmpp_stanza_get_text(xmpp_stanza_get_child_by_name(stanza, "body"));
-
-	from = xmpp_stanza_get_attribute(stanza, "from");
-	bare_from = xmpp_jid_bare(ctx, from);
-
-	if (isInList(pUsersInRoster, bare_from))
+	if (message)
 	{
-		printf("Received from \x1B[32m%s\x1B[0m:\n%s\n", xmpp_stanza_get_attribute(stanza, "from"), message);
-		parse(conn, ctx, message, from);
-	}
-	else
-	{
-		printf("Received from \x1B[31m%s\x1B[0m:\n%s\n", xmpp_stanza_get_attribute(stanza, "from"), message);
-	}
 
-	xmpp_free(ctx, message);
-	xmpp_free(ctx, bare_from);
+		from = xmpp_stanza_get_attribute(stanza, "from");
+		bare_from = xmpp_jid_bare(ctx, from);
+
+		if (isInList(pUsersInRoster, bare_from))
+		{
+			printf("Received from \x1B[32m%s\x1B[0m:\n%s\n", xmpp_stanza_get_attribute(stanza, "from"), message);
+			parse(conn, ctx, message, from);
+		}
+		else
+		{
+			printf("Received from \x1B[31m%s\x1B[0m:\n%s\n", xmpp_stanza_get_attribute(stanza, "from"), message);
+		}
+
+		xmpp_free(ctx, message);
+		xmpp_free(ctx, bare_from);
+	}
 
 	return 1;
 }

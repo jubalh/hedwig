@@ -64,6 +64,8 @@ void parse_run(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const c
 	xmpp_send(conn, message_st);
 	xmpp_stanza_release(message_st);
 	xmpp_free(ctx, id);
+
+	free(output);
 }
 
 void parse(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid)
