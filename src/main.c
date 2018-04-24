@@ -9,6 +9,7 @@
 #include "users.h"
 #include "xmpp.h"
 #include "global.h"
+#include "color.h"
 
 struct list *pUsersInRoster = NULL;
 bool g_allow_exec = false;
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
 	{
 		g_wd = getcwd(NULL, 0);
 	}
-	printf("Working directory: %s\n", g_wd);
+	printf("Working directory: %s%s%s\n", CLR_CYAN, g_wd, CLR_DEF);
 
 	xmpp_initialize();
 

@@ -5,9 +5,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <strophe.h>
+#include <unistd.h> /* access */
 #include "parser.h"
 #include "global.h"
-#include <unistd.h> /* access */
+#include "color.h"
 
 #define ALLOC_SIZE 512
 
@@ -50,6 +51,11 @@ static char * exec_return_output(char * const command)
 
 	fclose(out_file);
 
+	// in case of extra newline, remove it
+	int len = strlen(output_buffer);
+	if ('\n' == output_buffer[len - 1])
+		output_buffer[len - 1] = '\0';
+
 	return output_buffer;
 }
 
@@ -68,7 +74,7 @@ static void parse_exec(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message,
 	char *output;
 
 	output = exec_return_output(message);
-	printf("output:\n%s\n", output);
+	printf("Output:\n%s%s%s\n", CLR_CYAN, output, CLR_DEF);
 
 	send(conn, ctx, output, jid);
 
@@ -83,13 +89,13 @@ static void parse_cmd(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, 
 	char *output;
 	if (0 == access(cmd, X_OK))
 	{
-		printf("Running %s:\n", cmd);
+		printf("Running %s%s%s\n", CLR_GREEN, cmd, CLR_DEF);
 		output = exec_return_output(cmd);
-		printf("Output:\n%s\n", output);
+		printf("Output:\n%s%s%s\n", CLR_CYAN, output, CLR_DEF);
 	}
 	else
 	{
-		printf("No executable file: %s\n", cmd);
+		printf("No executable file: %s%s%s\n", CLR_YELLOW, cmd, CLR_DEF);
 		output = strdup("Command not known");
 	}
 
