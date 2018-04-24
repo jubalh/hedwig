@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <strophe.h>
 #include "parser.h"
+#include "global.h"
 
 #define ALLOC_SIZE 512
 
@@ -78,7 +79,10 @@ void parse(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char 
 				message[3] == 'e' &&
 				message[4] == 'c')
 		{
-			parse_exec(conn, ctx, message, jid);
+			if (g_allow_exec)
+			{
+				parse_exec(conn, ctx, message, jid);
+			}
 		}
 		else if (message[0] == '!' &&
 				message[1] == 'q' &&

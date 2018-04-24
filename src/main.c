@@ -8,14 +8,18 @@
 #include <unistd.h> /* getopt */
 #include "users.h"
 #include "xmpp.h"
+#include "global.h"
 
 struct list *pUsersInRoster = NULL;
+bool g_allow_exec = false;
 
 void print_usage()
 {
 	printf("Options:\n");
 	printf("-j JID\t\tset jid\n");
 	printf("-p PASSWORD\tset password\n");
+	printf("Optional:\n");
+	printf("-e\t\tallow execution of arbitrary commands via '!exec'\n");
 }
 
 int main(int argc, char *argv[])
@@ -27,7 +31,7 @@ int main(int argc, char *argv[])
 	char *pPassword = NULL;
 
 	int opt;
-	while ((opt = getopt(argc, argv, "j:p:")) != -1)
+	while ((opt = getopt(argc, argv, "j:p:e")) != -1)
 	{
 		switch(opt)
 		{
@@ -36,6 +40,9 @@ int main(int argc, char *argv[])
 				break;
 			case 'p':
 				pPassword = strdup(optarg);
+				break;
+			case 'e':
+				g_allow_exec = true;
 				break;
 		}
 	}
