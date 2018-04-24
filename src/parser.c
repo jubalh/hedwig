@@ -77,7 +77,7 @@ void parse(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char 
 				message[4] == 't')
 		{
 			printf("Shutting down\n");
-			xmpp_stop(ctx);
+			xmpp_disconnect(conn);
 		}
 	}
 }

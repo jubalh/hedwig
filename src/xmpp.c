@@ -109,7 +109,7 @@ void conn_handler(xmpp_conn_t * const conn,
 	}
 	else
 	{
-		printf("DEBUG: connection failed\n");
+		printf("DEBUG: disconnected\n");
 		xmpp_stop(ctx);
 	}
 }
