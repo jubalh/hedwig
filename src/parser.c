@@ -9,18 +9,18 @@
 
 #define ALLOC_SIZE 512
 
-void parse_run(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid)
+char * exec_return_output(char * const command)
 {
 	FILE *out_file;
 	char *output_buffer;
 	size_t output_size = 0;
 	size_t off = 0;
 
-	out_file = popen(&message[5], "r");
+	out_file = popen(command, "r");
 	if (!out_file)
 	{
-		fprintf(stderr, "Error while popen() from message: %s\n", message);
-		return;
+		fprintf(stderr, "Error while popen() with command: %s\n", command);
+		return NULL;
 	}
 
 	output_buffer = malloc(ALLOC_SIZE);
@@ -46,12 +46,21 @@ void parse_run(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const c
 		off += r;
 	}
 
-	printf("output:\n%s\n", output_buffer);
 	fclose(out_file);
+
+	return output_buffer;
+}
+
+void parse_run(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid)
+{
+	char *output;
+
+	output = exec_return_output(&message[5]);
+	printf("output:\n%s\n", output);
 
 	char *id = xmpp_uuid_gen(ctx);
 	xmpp_stanza_t *message_st = xmpp_message_new(ctx, "chat", jid, id);
-	xmpp_message_set_body(message_st, output_buffer);
+	xmpp_message_set_body(message_st, output);
 	xmpp_send(conn, message_st);
 	xmpp_stanza_release(message_st);
 	xmpp_free(ctx, id);
