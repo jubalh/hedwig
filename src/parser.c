@@ -9,7 +9,7 @@
 
 #define ALLOC_SIZE 512
 
-char * exec_return_output(char * const command)
+static char * exec_return_output(char * const command)
 {
 	FILE *out_file;
 	char *output_buffer;
@@ -51,7 +51,7 @@ char * exec_return_output(char * const command)
 	return output_buffer;
 }
 
-void parse_run(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid)
+static void parse_exec(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid)
 {
 	char *output;
 
@@ -73,12 +73,12 @@ void parse(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char 
 	if (message && (strlen(message) > 4))
 	{
 		if (message[0] == '!' &&
-				message[1] == 'r' &&
-				message[2] == 'u' &&
-				message[3] == 'n' &&
-				message[4] == ' ')
+				message[1] == 'e' &&
+				message[2] == 'x' &&
+				message[3] == 'e' &&
+				message[4] == 'c')
 		{
-			parse_run(conn, ctx, message, jid);
+			parse_exec(conn, ctx, message, jid);
 		}
 		else if (message[0] == '!' &&
 				message[1] == 'q' &&
