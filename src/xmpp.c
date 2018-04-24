@@ -41,12 +41,12 @@ int message_handler(xmpp_conn_t * const conn,
 	return 1;
 }
 
-void roster_handler(xmpp_conn_t * const conn,
+int roster_handler(xmpp_conn_t * const conn,
 		xmpp_stanza_t * const stanza,
 		void * const userdata)
 {
 	xmpp_stanza_t *query, *item;
-	const char *type, *name;
+	const char *type;
 
 	type = xmpp_stanza_get_type(stanza);
 	if (strcmp(type, "error") == 0)
@@ -65,6 +65,7 @@ void roster_handler(xmpp_conn_t * const conn,
 		}
 		printf("End of roster\n\n");
 	}
+	return 0;
 }
 
 void conn_handler(xmpp_conn_t * const conn,

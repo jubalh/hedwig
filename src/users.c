@@ -1,5 +1,6 @@
 // vim: noexpandtab:ts=4:sts=4:sw=4
 
+#include <stdlib.h>
 #include <string.h>
 #include "users.h"
 
