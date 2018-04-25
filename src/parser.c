@@ -49,11 +49,13 @@ static char * exec_return_output(char * const command)
 		off += r;
 	}
 
+	*(output_buffer + off) = '\0';
+
 	fclose(out_file);
 
 	// in case of extra newline, remove it
 	int len = strlen(output_buffer);
-	if ('\n' == output_buffer[len - 1])
+	if ((len > 1) && ('\n' == output_buffer[len - 1]))
 		output_buffer[len - 1] = '\0';
 
 	return output_buffer;
@@ -106,32 +108,20 @@ static void parse_cmd(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, 
 
 void parse(xmpp_conn_t * const conn, xmpp_ctx_t *ctx, char *message, const char *jid)
 {
-	if (message && (strlen(message) > 4))
+	if (message)
 	{
-		if (message[0] == '!' &&
-				message[1] == 'e' &&
-				message[2] == 'x' &&
-				message[3] == 'e' &&
-				message[4] == 'c')
+		if (strncmp("!exec ", message, 6) == 0)
 		{
 			if (g_allow_exec)
 			{
-				parse_exec(conn, ctx, &message[5], jid);
+				parse_exec(conn, ctx, &message[6], jid);
 			}
 		}
-		else if (message[0] == '!' &&
-				message[1] == 'c' &&
-				message[2] == 'm' &&
-				message[3] == 'd' &&
-				message[4] == ' ')
+		else if (strncmp("!cmd ", message, 5) == 0)
 		{
 			parse_cmd(conn, ctx, &message[5], jid);
 		}
-		else if (message[0] == '!' &&
-				message[1] == 'q' &&
-				message[2] == 'u' &&
-				message[3] == 'i' &&
-				message[4] == 't')
+		else if (strncmp("!quit ", message, 6) == 0)
 		{
 			printf("Shutting down\n");
 			xmpp_disconnect(conn);
